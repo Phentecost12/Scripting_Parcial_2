@@ -14,7 +14,7 @@ namespace UnitTestProject1
         public int Val { get => val; }
 
         protected int dur;
-        public int Dur { get => dur; set => dur = value; }
+        public int Dur { get => dur;}
 
         Type type;
         public Type Type { get => type;}

@@ -142,7 +142,6 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-
         public void CombatSimulatorTesting() 
         {
         ///// PARAMETERS ///////////////////////////////////////////////////////
@@ -279,14 +278,18 @@ namespace UnitTestProject1
             GameManager.Instance.CombatSimulator1turnEach(p1, p2);
 
             Assert.IsTrue(a1.Dur == 0);
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        
-        /////////////////////// EQUIP 0 DURABILITY EQUIPMENT //////////////////////////////////////
-            ResetParameter(out p1, out p2, out a1, out a2, out w1, out w2);
+            ///////////////////////////////////////////////////////////////////////////////////////////
 
-            a1.Dur = 0;
+            /////////////////////// EQUIP 0 DURABILITY EQUIPMENT //////////////////////////////////////
 
-            Assert.IsFalse(p1.EquipeEquipment(a1));
+            Weapon F = new Weapon("N", 2, 5, Type.Human);
+
+            for (int i = 0; i < 5; i++)
+            {
+                F.ReduceDurability();
+            }
+
+            Assert.IsFalse(p1.EquipeEquipment(F));
         }
         public void ResetParameter(out Player p1, out Player p2, out Equipment a1, out Equipment a2, out Equipment w1, out Equipment w2)
         {
