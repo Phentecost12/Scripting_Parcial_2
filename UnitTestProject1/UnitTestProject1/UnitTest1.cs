@@ -8,7 +8,7 @@ namespace UnitTestProject1
     {
 
         [TestMethod]
-        public void ValuesAboveZeroAndEquipment()
+        public void ValuesAboveZero()
         {
             ////////////////////// PLAYER ///////////////////////////////
             Player player1 = new Player("Pepito Peres1",0,Type.Human);
@@ -66,6 +66,24 @@ namespace UnitTestProject1
             Assert.IsTrue(armor4.Val >= 1);
             Assert.IsTrue(armor4.Dur >= 1);
             /////////////////////////////////////////////////////////////
+        }
+
+        [TestMethod]
+        public void EquipmentTest() 
+        {
+            Player player1 = new Player("Pepito Peres1", 0, Type.Human);
+            Player player2 = new Player("Pepito Peres2", -10, Type.Beast);
+            Player player3 = new Player("Pepito Peres3", 5, Type.Hybrid);
+
+            Equipment weapon1 = new Weapon("Arma de Pepito1", 0, 0, Type.Human);
+            Equipment weapon2 = new Weapon("Arma de Pepito2", -1, -10, Type.Beast);
+            Equipment weapon3 = new Weapon("Arma de Pepito", 0, -5, Type.Hybrid);
+            Equipment weapon4 = new Weapon("Arma de Pepito", 0, -5, Type.ANY);
+
+            Equipment armor1 = new Armor("Armadura de Pepito1", 0, 0, Type.Human);
+            Equipment armor2 = new Armor("Armadura de Pepito1", -10, -10, Type.Beast);
+            Equipment armor3 = new Armor("Armadura de Pepito1", -20, 0, Type.Hybrid);
+            Equipment armor4 = new Armor("Armadura de Pepito1", -20, 40, Type.ANY);
 
             ////////////////////// Weapon Equipe ////////////////////////
 
@@ -138,24 +156,15 @@ namespace UnitTestProject1
             Assert.IsTrue(player2.EquipedArmor == armor4);
 
             ////////////////////////////////////////////////////////////
-
         }
 
         [TestMethod]
-        public void CombatSimulatorTesting() 
+        public void DurabilityCheck() 
         {
-        ///// PARAMETERS ///////////////////////////////////////////////////////
-            Player p1;
-            Player p2;
-            Equipment w1;
-            Equipment w2;
-            Equipment a1;
-            Equipment a2;
-
+            Player p1,p2;
+            Equipment w1, w2, a1, a2;
             ResetParameter(out p1, out p2, out a1, out a2, out w1, out w2);
-        ////////////////////////////////////////////////////////////////////////
 
-        ///// DURABILITY CHECK //////////////////////////////////////////////////
             p1.EquipeEquipment(w1);
             p1.EquipeEquipment(a1);
             p2.EquipeEquipment(w2);
@@ -167,9 +176,13 @@ namespace UnitTestProject1
             Assert.IsTrue(p1.EquipedArmor.Dur < 100);
             Assert.IsTrue(p2.EquipedWeapon.Dur < 10);
             Assert.IsTrue(p2.EquipedArmor.Dur < 200);
-        //////////////////////////////////////////////////////////////////////////
+        }
 
-        ////////// TAKE DAMAGE WHIT NO ARMOR /////////////////////////////////////
+        [TestMethod]
+        public void TakeDamageNoArmor() 
+        {
+            Player p1, p2;
+            Equipment w1, w2, a1, a2;
             ResetParameter(out p1, out p2, out a1, out a2, out w1, out w2);
 
             p1.EquipeEquipment(w1);
@@ -178,9 +191,13 @@ namespace UnitTestProject1
             GameManager.Instance.CombatSimulator1turnEach(p1, p2);
 
             Assert.IsTrue(p2.Hp == 100 - 10);
-        ////////////////////////////////////////////////////////////////////////////
-        
-        //////////// TAKE DAMAGE WHIT ARMOR ////////////////////////////////////////
+        }
+
+        [TestMethod]
+        public void TakeDamageWhitArmor() 
+        {
+            Player p1, p2;
+            Equipment w1, w2, a1, a2;
             ResetParameter(out p1, out p2, out a1, out a2, out w1, out w2);
 
             p1.EquipeEquipment(w1);
@@ -188,13 +205,19 @@ namespace UnitTestProject1
             p2.EquipeEquipment(w2);
             p2.EquipeEquipment(a2);
 
-            GameManager.Instance.CombatSimulator1turnEach(p1,p2);
+            GameManager.Instance.CombatSimulator1turnEach(p1, p2);
 
             Assert.IsTrue(p1.EquipedArmor.Dur == 100 - 10);
             Assert.IsTrue(p2.EquipedArmor.Dur == 200 - 5);
-        //////////////////////////////////////////////////////////////////////////////
-        
-        ///////////// DEAL DAMAGE WITH NO WEAPON ///////////////////////////////////////
+            Assert.IsTrue(p1.Hp == 100);
+            Assert.IsTrue(p2.Hp == 100);
+        }
+
+        [TestMethod]
+        public void DealDamageNoWeapon() 
+        {
+            Player p1, p2;
+            Equipment w1, w2, a1, a2;
             ResetParameter(out p1, out p2, out a1, out a2, out w1, out w2);
 
             p2.EquipeEquipment(w2);
@@ -214,33 +237,26 @@ namespace UnitTestProject1
             GameManager.Instance.CombatSimulator1turnEach(p1, p2);
 
             Assert.IsTrue(p2.EquipedArmor.Dur < 200);
-        /////////////////////////////////////////////////////////////////////////////////
-        
-        /////////////// DEAL DAMAGE WITH NO WEAPON AND NO ARMOR /////////////////////////
+        }
+
+        [TestMethod]
+        public void DealDamageNoWeaponNoArmor() 
+        {
+            Player p1, p2;
+            Equipment w1, w2, a1, a2;
             ResetParameter(out p1, out p2, out a1, out a2, out w1, out w2);
 
             GameManager.Instance.CombatSimulator1turnEach(p1, p2);
 
-            Assert.IsTrue(p1.Hp == 100-5);
-            Assert.IsTrue(p2.Hp == 100-5);
-        ///////////////////////////////////////////////////////////////////////////////////
-        
-        //////////// 1 DURABILITY WEAPON //////////////////////////////////////////////////
-            ResetParameter(out p1, out p2, out a1, out a2, out w1, out w2);
+            Assert.IsTrue(p1.Hp == 100 - 5);
+            Assert.IsTrue(p2.Hp == 100 - 5);
+        }
 
-            p1.EquipeEquipment(w1);
-
-            for (int i = 0; i <= 3; i++)
-            {
-                p1.EquipedWeapon.ReduceDurability();
-            }
-
-            GameManager.Instance.CombatSimulator1turnEach(p1, p2);
-
-            Assert.IsTrue(p1.EquipedWeapon == null);
-        ///////////////////////////////////////////////////////////////////////////////////
-        
-        ///////////////// 1 DURABILITY ARMOR //////////////////////////////////////////////
+        [TestMethod]
+        public void OneDurabilityEquipment() 
+        {
+            Player p1, p2;
+            Equipment w1, w2, a1, a2;
             ResetParameter(out p1, out p2, out a1, out a2, out w1, out w2);
 
             p1.EquipeEquipment(w1);
@@ -250,22 +266,35 @@ namespace UnitTestProject1
 
             p1.EquipedArmor.ReduceDurability(199);
 
+            for (int i = 0; i <= 3; i++)
+            {
+                p1.EquipedWeapon.ReduceDurability();
+            }
+
             GameManager.Instance.CombatSimulator1turnEach(p1, p2);
 
-            Assert.IsTrue(p1.EquipedArmor== null);
-        /////////////////////////////////////////////////////////////////////////////////////
-        
-        //////////////// NO NEGATIVE VALUES IN HP ///////////////////////////////////////////
-            ResetParameter(out p1, out p2, out a1, out a2, out w1, out w2);
+            Assert.IsTrue(p1.EquipedWeapon == null);
+            Assert.IsTrue(p1.EquipedArmor == null);
+        }
 
+        [TestMethod]
+        public void NoNegativeValueHP() 
+        {
+            Player p1, p2;
+            Equipment w1, w2, a1, a2;
+            ResetParameter(out p1, out p2, out a1, out a2, out w1, out w2);
             p1.TakeDamage(99);
 
             GameManager.Instance.CombatSimulator1turnEach(p1, p2);
 
             Assert.IsTrue(p1.Hp == 0);
-        ////////////////////////////////////////////////////////////////////////////////////////
-        
-        ///////////// NO NEGATIVE VALUES IN ARMOR DUR //////////////////////////////////////////
+        }
+
+        [TestMethod]
+        public void NoNegativeValueArmorDur() 
+        {
+            Player p1, p2;
+            Equipment w1, w2, a1, a2;
             ResetParameter(out p1, out p2, out a1, out a2, out w1, out w2);
 
             p1.EquipeEquipment(w1);
@@ -278,18 +307,27 @@ namespace UnitTestProject1
             GameManager.Instance.CombatSimulator1turnEach(p1, p2);
 
             Assert.IsTrue(a1.Dur == 0);
-            ///////////////////////////////////////////////////////////////////////////////////////////
+        }
 
-            /////////////////////// EQUIP 0 DURABILITY EQUIPMENT //////////////////////////////////////
+        [TestMethod]
+        public void ZeroDurabilityEquipment() 
+        {
+            Player p1, p2;
+            Equipment w1, w2, a1, a2;
+            ResetParameter(out p1, out p2, out a1, out a2, out w1, out w2);
 
             Weapon F = new Weapon("N", 2, 5, Type.Human);
+            Armor D = new Armor("D",2,100,Type.Human);
 
             for (int i = 0; i < 5; i++)
             {
                 F.ReduceDurability();
             }
 
+            D.ReduceDurability(500);
+
             Assert.IsFalse(p1.EquipeEquipment(F));
+            Assert.IsFalse(p1.EquipeEquipment(D));
         }
         public void ResetParameter(out Player p1, out Player p2, out Equipment a1, out Equipment a2, out Equipment w1, out Equipment w2)
         {
